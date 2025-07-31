@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [incidents, setIncidents] = useState([]);
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState("");
+  const [description, setDescription] = useState("");
+
+  // Load incidents from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("incidents");
+    if (stored) {
+      setIncidents(JSON.parse(stored));
+    }
+  }, []);
+
+  // Save incidents to localStorage when list changes
+  useEffect(() => {
+    localStorage.setItem("incidents", JSON.stringify(incidents));
+  }, [incidents]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newIncident = { title, type, description };
+    setIncidents([...incidents, newIncident]);
+    setTitle("");
+    setType("");
+    setDescription("");
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="container">
+      <h1>HSE Incident Logger</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Incident Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Type (e.g. Fire, Slip)"
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Incident Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+        <button type="submit">Log Incident</button>
+      </form>
+
+      <h2>Logged Incidents</h2>
+      <ul>
+        {incidents.map((item, index) => (
+          <li key={index}>
+            <strong>{item.title}</strong> ({item.type})<br />
+            {item.description}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;
