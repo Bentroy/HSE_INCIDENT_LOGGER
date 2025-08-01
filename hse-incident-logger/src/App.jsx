@@ -11,18 +11,15 @@ function App() {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
 
-    // Theme state
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light';
+    return localStorage.getItem("theme") || "light";
   });
 
-  // Apply theme to document body class
+  // Apply theme to <html> tag using data attribute
   useEffect(() => {
-    document.body.className = theme;
-    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
   }, [theme]);
-
-
 
   useEffect(() => {
     localStorage.setItem("incidents", JSON.stringify(incidents));
@@ -43,17 +40,12 @@ function App() {
   };
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
-
-       <button onClick={toggleTheme} className="theme-toggle">
-        {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-      </button>
-
 
       <form onSubmit={handleSubmit}>
         <input
@@ -88,6 +80,13 @@ function App() {
           </li>
         ))}
       </ul>
+
+      <footer className="footer">
+        <p>© 2025 HSE Logger</p>
+        <button onClick={toggleTheme} className="theme-toggle">
+          {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+        </button>
+      </footer>
     </div>
   );
 }
