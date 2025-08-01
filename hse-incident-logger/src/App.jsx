@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
-    const saved = localStorage.getItem('incidents');
+    const saved = localStorage.getItem("incidents");
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
-    localStorage.setItem('incidents', JSON.stringify(incidents));
+    localStorage.setItem("incidents", JSON.stringify(incidents));
   }, [incidents]);
 
   const handleSubmit = (e) => {
@@ -24,14 +24,13 @@ function App() {
       description,
     };
     setIncidents([...incidents, newIncident]);
-    setTitle('');
-    setType('');
-    setDescription('');
+    setTitle("");
+    setType("");
+    setDescription("");
   };
 
   return (
     <div className="container">
-
       <h3 className="naming">HSE Incident Logger</h3>
 
       <form onSubmit={handleSubmit}>
@@ -61,7 +60,8 @@ function App() {
       <ul>
         {incidents.map((incident) => (
           <li key={incident.id}>
-            <strong>{incident.title}</strong> – {incident.type}<br />
+            <strong>{incident.title}</strong> – {incident.type}
+            <br />
             {incident.description}
           </li>
         ))}
