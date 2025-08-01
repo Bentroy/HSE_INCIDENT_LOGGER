@@ -11,6 +11,19 @@ function App() {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
 
+    // Theme state
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  // Apply theme to document body class
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+
+
   useEffect(() => {
     localStorage.setItem("incidents", JSON.stringify(incidents));
   }, [incidents]);
@@ -29,9 +42,18 @@ function App() {
     setDescription("");
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
+
+       <button onClick={toggleTheme} className="theme-toggle">
+        {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+      </button>
+
 
       <form onSubmit={handleSubmit}>
         <input
