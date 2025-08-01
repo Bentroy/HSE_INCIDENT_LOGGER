@@ -73,7 +73,7 @@ function App() {
 
       <ul>
         {incidents.map((incident) => (
-          <li key={incident.id}>
+          <li key={incident.id} className="incident-card">
             <strong>{incident.title}</strong> – {incident.type}
             <br />
             {incident.description}
@@ -84,7 +84,10 @@ function App() {
       <footer className="footer">
         <p>© 2025 HSE Logger</p>
         <button onClick={toggleTheme} className="theme-toggle">
-          {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+          <span className="icon-wrapper" aria-hidden="true">
+            {theme === "light" ? "🌙" : "☀️"}
+          </span>
+          {theme === "light" ? " Dark Mode" : " Light Mode"}
         </button>
       </footer>
     </div>

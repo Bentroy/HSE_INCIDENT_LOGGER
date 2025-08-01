@@ -20,6 +20,14 @@
   --button-bg: #238636;
   --button-text: #ffffff;
 }
+/* Root
+ bro is legit the root of all evil, like i was trying to find out why the stuff aint increasing in width and it was this nigga */
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 
 /* Global Reset */
 * {
@@ -42,14 +50,27 @@ body {
 
 .container {
   width: 100%;
-  max-width: 1000px;
+  max-width: 600px;
+  min-width: 350px;
   background-color: var(--card);
   padding: 2rem 3rem;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border);
+  margin-top: 4rem;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 
 /* Header */
@@ -89,6 +110,22 @@ textarea {
   resize: vertical;
   min-height: 100px;
 }
+/* style */
+input,
+textarea,
+form button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:hover,
+input:focus,
+textarea:hover,
+textarea:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* style ends */
 
 /* Submit Button */
 form button {
@@ -103,8 +140,12 @@ form button {
 }
 
 form button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 10px var(--accent);
   opacity: 0.9;
 }
+
+
 
 /* Incident List */
 ul {
@@ -121,6 +162,12 @@ li {
   border-left: 4px solid var(--accent);
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+li:hover {
+  transform: scale(1.015);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Footer */
@@ -140,9 +187,41 @@ li {
   font-size: 1rem;
   color: var(--accent);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: opacity 0.3s;
+
 }
 
-.theme-toggle:hover {
-  opacity: 0.8;
+.icon-wrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.2rem;
+  transition: transform 0.4s ease;
+    transform-origin: center;
+}
+
+
+.theme-toggle:hover .icon-wrapper{
+  transform: rotate(360deg);
+}
+
+
+.incident-card {
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
