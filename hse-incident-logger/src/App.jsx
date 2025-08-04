@@ -12,6 +12,8 @@ function App() {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const [selectFocused, setSelectFocused] = useState(false);
+
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
@@ -99,10 +101,12 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <div className="select-wrapper">
+        <div className="dropdown-container">
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
+            onFocus={() => setSelectFocused(true)}
+            onBlur={() => setSelectFocused(false)}
             required
           >
             <option value="">Select Type</option>
@@ -112,7 +116,9 @@ function App() {
             <option value="Spill">Spill</option>
             <option value="Other">Other</option>
           </select>
-          <span className="select-icon">▼</span>
+          <span className={`dropdown-icon ${selectFocused ? "flipped" : ""}`}>
+            ▼
+          </span>
         </div>
 
         <textarea
