@@ -43,12 +43,11 @@ function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-
   const handleDelete = (id) => {
     const updated = incidents.filter((incident) => incident.id !== id);
     setIncidents(updated);
   };
-  
+
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
