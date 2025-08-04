@@ -256,3 +256,9 @@ li:hover {
 .edit-btn {
   background-color: #007bff; /* Bootstrap primary blue */
 }
+
+.action-buttons {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.75rem; /* space between buttons */
+}
