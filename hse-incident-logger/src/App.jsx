@@ -31,7 +31,13 @@ function App() {
     if (editingId) {
       const updatedIncidents = incidents.map((incident) =>
         incident.id === editingId
-          ? { ...incident, title, type, description }
+          ? {
+              ...incident,
+              title,
+              type,
+              description,
+              timestamp: incident.timestamp,
+            }
           : incident
       );
       setIncidents(updatedIncidents);
@@ -42,6 +48,7 @@ function App() {
         title,
         type,
         description,
+        timestamp: new Date().toLocaleString(),
       };
       setIncidents([...incidents, newIncident]);
     }
@@ -119,6 +126,8 @@ function App() {
             <strong>{incident.title}</strong> – {incident.type}
             <br />
             {incident.description}
+            <br />
+            <small>{incident.timestamp}</small>
             <br />
             <div className="action-buttons">
               <button className="edit-btn" onClick={() => handleEdit(incident)}>
