@@ -311,7 +311,7 @@ li:hover {
   color: var(--text-color);
 }
 
-
+/* Dropdown styles */
 .dropdown-container {
   position: relative;
   display: inline-block;
@@ -339,4 +339,25 @@ li:hover {
 .dropdown-icon.flipped {
   transform: translateY(-50%) rotate(180deg);
 }
-/* Dropdown styles */
+
+
+/* search bar */
+.search-bar {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--accent, #007bff);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+/* search bar ends */

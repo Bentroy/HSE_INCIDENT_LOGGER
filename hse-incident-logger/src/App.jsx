@@ -7,18 +7,19 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Form state management
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
   const [filterType, setFilterType] = useState("All");
   const [selectFocused, setSelectFocused] = useState(false);
+  const [search, setSearch] = useState("");
 
-
+  // Theme management
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
   });
-
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -157,11 +158,24 @@ function App() {
         </select>
       </div>
 
+      <input
+        type="text"
+        placeholder="Search incidents..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="search-bar"
+      />
+
       <ul>
         {incidents
           .filter((incident) =>
-            filterType === "All" ? true : incident.type === filterType
-          )
+            const query = search.toLowerCase();
+            return (
+              incident.title.toLowerCase().includes(query) ||
+              incident.type.toLowerCase().includes(query) ||
+              incident.description.toLowerCase().includes(query)
+            );
+          })
           .map((incident) => (
             <li key={incident.id} className="incident-card">
               <strong>{incident.title}</strong> – {incident.type}
