@@ -245,6 +245,8 @@ li:hover {
   display: inline-block;
   min-width: 90px; /* ensures same width */
   text-align: center;
+  /* margin-left: 1%; */
+  margin-right: 3%;
 }
 
 .edit-btn:hover,
@@ -342,22 +344,38 @@ li:hover {
 
 
 /* search bar */
-.search-bar {
+.search-wrapper {
+  position: relative;
   width: 100%;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background-color: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  font-family: inherit;
-  transition: all 0.3s ease;
+  max-width: 400px;
+  margin: 1.5rem auto;
 }
 
-.search-bar:focus {
-  outline: none;
-  border-color: var(--accent, #007bff);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+.search-wrapper input {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--text);
 }
+
+.search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.no-results {
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--text);
+}
+
 /* search bar ends */

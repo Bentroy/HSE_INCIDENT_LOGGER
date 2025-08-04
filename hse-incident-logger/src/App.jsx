@@ -85,10 +85,14 @@ function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  console.log(
-    "Incident types:",
-    incidents.map((i) => i.type)
-  );
+
+  const filteredIncidents = incidents.filter((incident) =>
+  incident.title.toLowerCase().includes(search.toLowerCase()) ||
+  incident.type.toLowerCase().includes(search.toLowerCase()) ||
+  incident.description.toLowerCase().includes(search.toLowerCase())
+);
+
+
 
   return (
     <div className="container">
@@ -158,48 +162,38 @@ function App() {
         </select>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search incidents..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="search-bar"
-      />
+      <div className="search-wrapper">
+        <input
+          type="text"
+          placeholder="Search incidents..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <span className="search-icon">🔍</span>
+      </div>
 
       <ul>
-        {incidents
-          .filter((incident) =>
-            const query = search.toLowerCase();
-            return (
-              incident.title.toLowerCase().includes(query) ||
-              incident.type.toLowerCase().includes(query) ||
-              incident.description.toLowerCase().includes(query)
-            );
-          })
-          .map((incident) => (
+        {filteredIncidents.length > 0 ? (
+          filteredIncidents.map((incident) => (
             <li key={incident.id} className="incident-card">
               <strong>{incident.title}</strong> – {incident.type}
               <br />
               {incident.description}
               <br />
-              <small>{incident.timestamp}</small>
-              <br />
-              <div className="action-buttons">
-                <button
-                  className="edit-btn"
-                  onClick={() => handleEdit(incident)}
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(incident.id)}
-                >
-                  🗑️ Delete
-                </button>
-              </div>
+              <button className="edit-btn" onClick={() => handleEdit(incident)}>
+                ✏️ Edit
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(incident.id)}
+              >
+                🗑️ Delete
+              </button>
             </li>
-          ))}
+          ))
+        ) : (
+          <p className="no-results">No incidents match your search.</p>
+        )}
       </ul>
 
       <footer className="footer">
