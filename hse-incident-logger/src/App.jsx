@@ -11,6 +11,7 @@ function App() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
+  const [filterType, setFilterType] = useState("All");
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
@@ -81,6 +82,11 @@ function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+  console.log(
+    "Incident types:",
+    incidents.map((i) => i.type)
+  );
+
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
@@ -93,13 +99,22 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <input
-          type="text"
-          placeholder="Type (e.g. Fire, Electrical)"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-        />
+        <div className="select-wrapper">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            required
+          >
+            <option value="">Select Type</option>
+            <option value="Fire">Fire</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Injury">Injury</option>
+            <option value="Spill">Spill</option>
+            <option value="Other">Other</option>
+          </select>
+          <span className="select-icon">▼</span>
+        </div>
+
         <textarea
           placeholder="Description"
           value={description}
@@ -120,28 +135,51 @@ function App() {
         )}
       </form>
 
+      <div className="filter-container">
+        <label htmlFor="filter">Filter by Type:</label>
+        <select
+          id="filter"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+        >
+          <option value="All">All</option>
+          {[...new Set(incidents.map((i) => i.type))].map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <ul>
-        {incidents.map((incident) => (
-          <li key={incident.id} className="incident-card">
-            <strong>{incident.title}</strong> – {incident.type}
-            <br />
-            {incident.description}
-            <br />
-            <small>{incident.timestamp}</small>
-            <br />
-            <div className="action-buttons">
-              <button className="edit-btn" onClick={() => handleEdit(incident)}>
-                ✏️ Edit
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(incident.id)}
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </li>
-        ))}
+        {incidents
+          .filter((incident) =>
+            filterType === "All" ? true : incident.type === filterType
+          )
+          .map((incident) => (
+            <li key={incident.id} className="incident-card">
+              <strong>{incident.title}</strong> – {incident.type}
+              <br />
+              {incident.description}
+              <br />
+              <small>{incident.timestamp}</small>
+              <br />
+              <div className="action-buttons">
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEdit(incident)}
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(incident.id)}
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            </li>
+          ))}
       </ul>
 
       <footer className="footer">
