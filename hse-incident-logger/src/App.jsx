@@ -43,6 +43,12 @@ function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+
+  const handleDelete = (id) => {
+    const updated = incidents.filter((incident) => incident.id !== id);
+    setIncidents(updated);
+  };
+  
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
@@ -77,6 +83,13 @@ function App() {
             <strong>{incident.title}</strong> – {incident.type}
             <br />
             {incident.description}
+            <br />
+            <button
+              className="delete-btn"
+              onClick={() => handleDelete(incident.id)}
+            >
+              🗑️ Delete
+            </button>
           </li>
         ))}
       </ul>
