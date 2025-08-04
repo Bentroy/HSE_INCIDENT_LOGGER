@@ -7,6 +7,7 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
@@ -15,7 +16,6 @@ function App() {
     return localStorage.getItem("theme") || "light";
   });
 
-  // Apply theme to <html> tag using data attribute
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -27,25 +27,51 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newIncident = {
-      id: Date.now(),
-      title,
-      type,
-      description,
-    };
-    setIncidents([...incidents, newIncident]);
+
+    if (editingId) {
+      const updatedIncidents = incidents.map((incident) =>
+        incident.id === editingId
+          ? { ...incident, title, type, description }
+          : incident
+      );
+      setIncidents(updatedIncidents);
+      setEditingId(null);
+    } else {
+      const newIncident = {
+        id: Date.now(),
+        title,
+        type,
+        description,
+      };
+      setIncidents([...incidents, newIncident]);
+    }
+
     setTitle("");
     setType("");
     setDescription("");
   };
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  const handleEdit = (incident) => {
+    setEditingId(incident.id);
+    setTitle(incident.title);
+    setType(incident.type);
+    setDescription(incident.description);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setTitle("");
+    setType("");
+    setDescription("");
   };
 
   const handleDelete = (id) => {
     const updated = incidents.filter((incident) => incident.id !== id);
     setIncidents(updated);
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
@@ -73,7 +99,18 @@ function App() {
           onChange={(e) => setDescription(e.target.value)}
           required
         ></textarea>
-        <button type="submit">Log Incident</button>
+        <button type="submit">
+          {editingId ? "💾 Save Changes" : "Log Incident"}
+        </button>
+        {editingId && (
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={handleCancelEdit}
+          >
+            ❌ Cancel
+          </button>
+        )}
       </form>
 
       <ul>
@@ -83,12 +120,17 @@ function App() {
             <br />
             {incident.description}
             <br />
-            <button
-              className="delete-btn"
-              onClick={() => handleDelete(incident.id)}
-            >
-              🗑️ Delete
-            </button>
+            <div className="action-buttons">
+              <button className="edit-btn" onClick={() => handleEdit(incident)}>
+                ✏️ Edit
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(incident.id)}
+              >
+                🗑️ Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
