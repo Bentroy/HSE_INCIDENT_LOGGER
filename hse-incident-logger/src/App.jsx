@@ -15,6 +15,8 @@ function App() {
   const [filterType, setFilterType] = useState("All");
   const [selectFocused, setSelectFocused] = useState(false);
   const [search, setSearch] = useState("");
+  const [files, setFiles] = useState([]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -32,6 +34,12 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const fileArray = Array.from(files).map((file) => ({
+      name: file.name,
+      url: URL.createObjectURL(file),
+      type: file.type,
+    }));
+
     if (editingId) {
       const updatedIncidents = incidents.map((incident) =>
         incident.id === editingId
@@ -41,6 +49,7 @@ function App() {
               type,
               description,
               timestamp: incident.timestamp,
+              files: fileArray,
             }
           : incident
       );
@@ -53,13 +62,16 @@ function App() {
         type,
         description,
         timestamp: new Date().toLocaleString(),
+        files: fileArray,
       };
       setIncidents([...incidents, newIncident]);
     }
 
+    // Reset form
     setTitle("");
     setType("");
     setDescription("");
+    setFiles([]);
   };
 
   const handleEdit = (incident) => {
@@ -85,14 +97,16 @@ function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+  const filteredIncidents = incidents.filter(
+    (incident) =>
+      incident.title.toLowerCase().includes(search.toLowerCase()) ||
+      incident.type.toLowerCase().includes(search.toLowerCase()) ||
+      incident.description.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const filteredIncidents = incidents.filter((incident) =>
-  incident.title.toLowerCase().includes(search.toLowerCase()) ||
-  incident.type.toLowerCase().includes(search.toLowerCase()) ||
-  incident.description.toLowerCase().includes(search.toLowerCase())
-);
-
-
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files)); // store as array
+  };
 
   return (
     <div className="container">
@@ -132,6 +146,28 @@ function App() {
           onChange={(e) => setDescription(e.target.value)}
           required
         ></textarea>
+
+        <input type="file" multiple onChange={handleFileChange} />
+
+        {/* Preview selected files */}
+        <div className="file-preview">
+          {files.length > 0 &&
+            files.map((file, index) => (
+              <div key={index} className="file-item">
+                {file.type.startsWith("image/") ? (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    width="80"
+                    height="80"
+                  />
+                ) : (
+                  <p>{file.name}</p>
+                )}
+              </div>
+            ))}
+        </div>
+
         <button type="submit">
           {editingId ? "💾 Save Changes" : "Log Incident"}
         </button>
@@ -180,21 +216,65 @@ function App() {
               <br />
               {incident.description}
               <br />
+              <small>{incident.timestamp}</small>
+              <br />
+              {incident.files && incident.files.length > 0 && (
+                <div className="incident-files">
+                  {incident.files.map((file, index) =>
+                    file.type && file.type.startsWith("image/") ? (
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        width="80"
+                        height="80"
+                      />
+                    ) : (
+                      <p key={index}>{file.name}</p>
+                    )
+                  )}
+                </div>
+              )}
               <button className="edit-btn" onClick={() => handleEdit(incident)}>
                 ✏️ Edit
               </button>
               <button
                 className="delete-btn"
-                onClick={() => handleDelete(incident.id)}
+                onClick={() => setConfirmDeleteId(incident.id)}
               >
                 🗑️ Delete
               </button>
             </li>
           ))
-        ) : (
+        ) : search.trim() !== "" ? (
           <p className="no-results">No incidents match your search.</p>
-        )}
+        ) : null}
       </ul>
+
+      {confirmDeleteId && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <p>Are you sure you want to delete this incident?</p>
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setConfirmDeleteId(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => {
+                  handleDelete(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="footer">
         <p>© 2025 HSE Logger</p>
