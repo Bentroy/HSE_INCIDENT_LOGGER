@@ -108,6 +108,42 @@ function App() {
     setFiles(Array.from(e.target.files)); // store as array
   };
 
+  // Export to CSV function
+
+  const exportToCSV = () => {
+  if (incidents.length === 0) {
+    alert("No incidents to export.");
+    return;
+  }
+
+  const csvRows = [
+    ["Title", "Type", "Description", "Date", "Files"]
+  ];
+
+  incidents.forEach((incident) => {
+    const files = incident.files?.map((file) => file.name).join(", ") || "";
+    csvRows.push([
+      `"${incident.title}"`,
+      `"${incident.type}"`,
+      `"${incident.description}"`,
+      `"${incident.timestamp}"`,
+      `"${files}"`
+    ]);
+  });
+
+  const csvContent = csvRows.map((row) => row.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "incidents.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
+
   return (
     <div className="container">
       <h3 className="naming">HSE Incident Logger</h3>
@@ -181,6 +217,10 @@ function App() {
           </button>
         )}
       </form>
+
+      <button onClick={exportToCSV} className="export-btn">
+        📤 Export CSV
+      </button>
 
       <div className="filter-container">
         <label htmlFor="filter">Filter by Type:</label>
