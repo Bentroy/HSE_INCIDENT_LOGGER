@@ -218,9 +218,6 @@ function App() {
         )}
       </form>
 
-      <button onClick={exportToCSV} className="export-btn">
-        📤 Export CSV
-      </button>
 
       <div className="filter-container">
         <label htmlFor="filter">Filter by Type:</label>
@@ -247,6 +244,11 @@ function App() {
         />
         <span className="search-icon">🔍</span>
       </div>
+
+      
+      <button onClick={exportToCSV} className="export-btn">
+        📤 Export CSV
+      </button>
 
       <ul>
         {filteredIncidents.length > 0 ? (
