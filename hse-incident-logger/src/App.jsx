@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { useRef } from "react";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
@@ -8,6 +9,8 @@ function App() {
   });
 
   // Form state management
+  const fileInputRef = useRef(null);
+  const [toast, setToast] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
@@ -55,6 +58,7 @@ function App() {
       );
       setIncidents(updatedIncidents);
       setEditingId(null);
+      showToast("Incident updated successfully!");
     } else {
       const newIncident = {
         id: Date.now(),
@@ -65,6 +69,7 @@ function App() {
         files: fileArray,
       };
       setIncidents([...incidents, newIncident]);
+      showToast("Incident logged successfully!");
     }
 
     // Reset form
@@ -72,6 +77,12 @@ function App() {
     setType("");
     setDescription("");
     setFiles([]);
+
+
+    // Clear file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
   };
 
   const handleEdit = (incident) => {
@@ -91,10 +102,18 @@ function App() {
   const handleDelete = (id) => {
     const updated = incidents.filter((incident) => incident.id !== id);
     setIncidents(updated);
+    showToast("Incident deleted successfully!");
   };
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
+  const showToast = (message, duration = 3000) => {
+    setToast(message);
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
   };
 
   const filteredIncidents = incidents.filter(
@@ -111,41 +130,39 @@ function App() {
   // Export to CSV function
 
   const exportToCSV = () => {
-  if (incidents.length === 0) {
-    alert("No incidents to export.");
-    return;
-  }
+    if (incidents.length === 0) {
+      alert("No incidents to export.");
+      return;
+    }
 
-  const csvRows = [
-    ["Title", "Type", "Description", "Date", "Files"]
-  ];
+    const csvRows = [["Title", "Type", "Description", "Date", "Files"]];
 
-  incidents.forEach((incident) => {
-    const files = incident.files?.map((file) => file.name).join(", ") || "";
-    csvRows.push([
-      `"${incident.title}"`,
-      `"${incident.type}"`,
-      `"${incident.description}"`,
-      `"${incident.timestamp}"`,
-      `"${files}"`
-    ]);
-  });
+    incidents.forEach((incident) => {
+      const files = incident.files?.map((file) => file.name).join(", ") || "";
+      csvRows.push([
+        `"${incident.title}"`,
+        `"${incident.type}"`,
+        `"${incident.description}"`,
+        `"${incident.timestamp}"`,
+        `"${files}"`,
+      ]);
+    });
 
-  const csvContent = csvRows.map((row) => row.join(",")).join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
+    const csvContent = csvRows.map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "incidents.csv";
-  link.click();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "incidents.csv";
+    link.click();
 
-  URL.revokeObjectURL(url);
-};
-
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="container">
+      {toast && <div className="toast">{toast}</div>}
       <h3 className="naming">HSE Incident Logger</h3>
 
       <form onSubmit={handleSubmit}>
@@ -183,7 +200,12 @@ function App() {
           required
         ></textarea>
 
-        <input type="file" multiple onChange={handleFileChange} />
+        <input
+          type="file"
+          multiple
+          onChange={handleFileChange}
+          ref={fileInputRef}
+        />
 
         {/* Preview selected files */}
         <div className="file-preview">
@@ -218,7 +240,6 @@ function App() {
         )}
       </form>
 
-
       <div className="filter-container">
         <label htmlFor="filter">Filter by Type:</label>
         <select
@@ -245,7 +266,6 @@ function App() {
         <span className="search-icon">🔍</span>
       </div>
 
-      
       <button onClick={exportToCSV} className="export-btn">
         📤 Export CSV
       </button>
