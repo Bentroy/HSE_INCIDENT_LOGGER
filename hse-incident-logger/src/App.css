@@ -467,3 +467,38 @@ li:hover {
   100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
 /* Toast Notification ends */
+
+
+
+.controls-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.controls-row select,
+.controls-row input {
+  padding: 6px;
+  font-size: 0.9rem;
+}
+
+.controls-row select {
+  flex: 1;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--input-bg);
+  color: var(--text);
+}

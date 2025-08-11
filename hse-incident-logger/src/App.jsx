@@ -20,6 +20,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [files, setFiles] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [sortOption, setSortOption] = useState("Newest");
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -78,7 +79,6 @@ function App() {
     setDescription("");
     setFiles([]);
 
-
     // Clear file input
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
@@ -116,12 +116,36 @@ function App() {
     }, duration);
   };
 
-  const filteredIncidents = incidents.filter(
+  // Apply search filter
+  const searchedIncidents = incidents.filter(
     (incident) =>
       incident.title.toLowerCase().includes(search.toLowerCase()) ||
       incident.type.toLowerCase().includes(search.toLowerCase()) ||
       incident.description.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Apply type filter
+  const filteredIncidents =
+    filterType === "All"
+      ? searchedIncidents
+      : searchedIncidents.filter((incident) => incident.type === filterType);
+
+  // Apply sorting
+  const sortedIncidents = [...filteredIncidents].sort((a, b) => {
+    if (sortOption === "newest") {
+      return new Date(b.timestamp) - new Date(a.timestamp);
+    }
+    if (sortOption === "oldest") {
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    }
+    if (sortOption === "typeAsc") {
+      return a.type.localeCompare(b.type);
+    }
+    if (sortOption === "typeDesc") {
+      return b.type.localeCompare(a.type);
+    }
+    return 0;
+  });
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files)); // store as array
@@ -240,39 +264,44 @@ function App() {
         )}
       </form>
 
-      <div className="filter-container">
-        <label htmlFor="filter">Filter by Type:</label>
+      {/* Controls Row (Filter, Sort, Search) */}
+      <div className="controls-row">
         <select
-          id="filter"
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
         >
-          <option value="All">All</option>
+          <option value="All">Filter: All</option>
           {[...new Set(incidents.map((i) => i.type))].map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
           ))}
         </select>
-      </div>
 
-      <div className="search-wrapper">
-        <input
-          type="text"
-          placeholder="Search incidents..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <span className="search-icon">🔍</span>
-      </div>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="newest">Sort: Newest First</option>
+          <option value="oldest">Sort: Oldest First</option>
+          <option value="typeAsc">Sort: Type (A–Z)</option>
+          <option value="typeDesc">Sort: Type (Z–A)</option>
+        </select>
 
-      <button onClick={exportToCSV} className="export-btn">
-        📤 Export CSV
-      </button>
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <span className="search-icon">🔍</span>
+        </div>
+      </div>
 
       <ul>
-        {filteredIncidents.length > 0 ? (
-          filteredIncidents.map((incident) => (
+        {sortedIncidents.length > 0 ? (
+          sortedIncidents.map((incident) => (
             <li key={incident.id} className="incident-card">
               <strong>{incident.title}</strong> – {incident.type}
               <br />
@@ -312,6 +341,13 @@ function App() {
           <p className="no-results">No incidents match your search.</p>
         ) : null}
       </ul>
+
+      {/* Export Button Below List */}
+      <div className="export-container">
+        <button onClick={exportToCSV} className="export-btn small">
+          📤 Export CSV
+        </button>
+      </div>
 
       {confirmDeleteId && (
         <div className="modal-overlay">
