@@ -21,6 +21,8 @@ function App() {
   const [files, setFiles] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [sortOption, setSortOption] = useState("Newest");
+  const [visibleCount, setVisibleCount] = useState(2);
+
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -299,48 +301,63 @@ function App() {
         </div>
       </div>
 
-      <ul>
-        {sortedIncidents.length > 0 ? (
-          sortedIncidents.map((incident) => (
-            <li key={incident.id} className="incident-card">
-              <strong>{incident.title}</strong> – {incident.type}
-              <br />
-              {incident.description}
-              <br />
-              <small>{incident.timestamp}</small>
-              <br />
-              {incident.files && incident.files.length > 0 && (
-                <div className="incident-files">
-                  {incident.files.map((file, index) =>
-                    file.type && file.type.startsWith("image/") ? (
-                      <img
-                        key={index}
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        width="80"
-                        height="80"
-                      />
-                    ) : (
-                      <p key={index}>{file.name}</p>
-                    )
-                  )}
-                </div>
+ <ul>
+  {sortedIncidents.length > 0 ? (
+    sortedIncidents
+      .slice(0, visibleCount) // ⬅ Show only up to visibleCount
+      .map((incident) => (
+        <li key={incident.id} className="incident-card">
+          <strong>{incident.title}</strong> – {incident.type}
+          <br />
+          {incident.description}
+          <br />
+          <small>{incident.timestamp}</small>
+          <br />
+          {incident.files && incident.files.length > 0 && (
+            <div className="incident-files">
+              {incident.files.map((file, index) =>
+                file.type && file.type.startsWith("image/") ? (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    width="80"
+                    height="80"
+                  />
+                ) : (
+                  <p key={index}>{file.name}</p>
+                )
               )}
-              <button className="edit-btn" onClick={() => handleEdit(incident)}>
-                ✏️ Edit
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => setConfirmDeleteId(incident.id)}
-              >
-                🗑️ Delete
-              </button>
-            </li>
-          ))
-        ) : search.trim() !== "" ? (
-          <p className="no-results">No incidents match your search.</p>
-        ) : null}
-      </ul>
+            </div>
+          )}
+          <button className="edit-btn" onClick={() => handleEdit(incident)}>
+            ✏️ Edit
+          </button>
+          <button
+            className="delete-btn"
+            onClick={() => setConfirmDeleteId(incident.id)}
+          >
+            🗑️ Delete
+          </button>
+        </li>
+      ))
+  ) : search.trim() !== "" ? (
+    <p className="no-results">No incidents match your search.</p>
+  ) : null}
+</ul>
+
+{/* Load More Button */}
+{visibleCount < sortedIncidents.length && (
+  <div style={{ textAlign: "center", marginTop: "10px" }}>
+    <button
+      onClick={() => setVisibleCount((prev) => prev + 2)}
+      className="load-more-btn"
+    >
+      Load More
+    </button>
+  </div>
+)}
+
 
       {/* Export Button Below List */}
       <div className="export-container">

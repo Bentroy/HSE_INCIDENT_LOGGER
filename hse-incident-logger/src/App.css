@@ -502,3 +502,16 @@ li:hover {
   background-color: var(--input-bg);
   color: var(--text);
 }
+
+
+.load-more-btn {
+  padding: 8px 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.load-more-btn:hover {
+  background-color: #0056b3;
+}
