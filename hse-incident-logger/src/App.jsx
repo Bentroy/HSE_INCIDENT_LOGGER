@@ -365,7 +365,6 @@ function App() {
           📤 Export CSV
         </button>
       </div>
-
       {confirmDeleteId && (
         <div className="modal-overlay">
           <div className="modal">
