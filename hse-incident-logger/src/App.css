@@ -28,7 +28,6 @@
   justify-content: center;
 }
 
-
 /* Global Reset */
 * {
   margin: 0;
@@ -72,7 +71,6 @@ body {
   }
 }
 
-
 /* Header */
 .naming {
   font-size: 1.8rem;
@@ -102,8 +100,7 @@ select {
 }
 
 input:focus,
-textarea:focus 
-select:focus {
+textarea:focus select:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -115,15 +112,15 @@ textarea {
 /* style */
 input,
 textarea,
-form button {
+form button,
+select {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:hover,
 input:focus,
 textarea:hover,
-textarea:focus 
-select:hover,
+textarea:focus select:hover,
 select:focus {
   transform: scale(1.02);
   box-shadow: 0 0 6px var(--accent);
@@ -148,8 +145,6 @@ form button:hover {
   box-shadow: 0 0 10px var(--accent);
   opacity: 0.9;
 }
-
-
 
 /* Incident List */
 ul {
@@ -195,7 +190,6 @@ li:hover {
   align-items: center;
   gap: 0.5rem;
   transition: opacity 0.3s;
-
 }
 
 .icon-wrapper {
@@ -206,17 +200,32 @@ li:hover {
   height: 1.5rem;
   font-size: 1.2rem;
   transition: transform 0.4s ease;
-    transform-origin: center;
+  transform-origin: center;
 }
 
-
-.theme-toggle:hover .icon-wrapper{
+.theme-toggle:hover .icon-wrapper {
   transform: rotate(360deg);
 }
 
-
 .incident-card {
   animation: popIn 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.incident-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.incident-card button {
+  margin-right: 8px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.incident-card button:hover {
+  transform: scale(1.05);
 }
 
 @keyframes popIn {
@@ -229,8 +238,6 @@ li:hover {
     opacity: 1;
   }
 }
-
-
 
 .edit-btn,
 .delete-btn {
@@ -295,7 +302,6 @@ li:hover {
   transition: border 0.3s, transform 0.2s ease;
 }
 
-
 .filter-container {
   margin: 1rem 0;
   display: flex;
@@ -318,30 +324,24 @@ li:hover {
   position: relative;
   display: inline-block;
   width: 100%;
-}
-
-.dropdown-container select {
-  width: 100%;
-  padding-right: 2.5rem; /* room for icon */
-  appearance: none; /* remove default arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-.dropdown-icon {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  transition: transform 0.3s ease;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--input-bg);
   color: var(--text);
+  transition: border 0.3s;
 }
 
-.dropdown-icon.flipped {
-  transform: translateY(-50%) rotate(180deg);
+.dropdown-container:hover {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 5px var(--accent);
 }
-
+.dropdown-container:focus-within {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 5px var(--accent);
+}
 
 /* search bar */
 .search-wrapper {
@@ -420,7 +420,6 @@ li:hover {
   opacity: 0.8;
 }
 
-
 .export-btn {
   margin: 1rem auto;
   display: block;
@@ -454,21 +453,29 @@ li:hover {
   border: 1px solid var(--border-color);
   padding: 10px 20px;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   animation: fadeInOut 3s ease-in-out forwards;
-  
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  90% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
 }
 /* Toast Notification ends */
-
-
 
 .controls-row {
   display: flex;
@@ -503,7 +510,6 @@ li:hover {
   color: var(--text);
 }
 
-
 .load-more-btn {
   padding: 8px 14px;
   background-color: #007bff;
@@ -514,4 +520,53 @@ li:hover {
 }
 .load-more-btn:hover {
   background-color: #0056b3;
+}
+
+.impact-badge {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.impact-badge.high {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.impact-badge.medium {
+  background-color: #ffa500;
+  color: white;
+}
+
+.impact-badge.low {
+  background-color: #4caf50;
+  color: white;
+}
+
+.beta-badge {
+  background: linear-gradient(135deg, #ff4d4d, #ff9900);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 8px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.3s ease;
+  margin-top: 1%;
+}
+
+.beta-badge:hover {
+  box-shadow: 0 0 12px rgba(255, 100, 0, 0.8);
+  transform: scale(1.05);
+}
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

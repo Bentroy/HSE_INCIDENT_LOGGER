@@ -16,13 +16,12 @@ function App() {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
   const [filterType, setFilterType] = useState("All");
-  const [selectFocused, setSelectFocused] = useState(false);
   const [search, setSearch] = useState("");
   const [files, setFiles] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [sortOption, setSortOption] = useState("Newest");
   const [visibleCount, setVisibleCount] = useState(2);
-
+  const [impact, setImpact] = useState("");
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -56,6 +55,7 @@ function App() {
               description,
               timestamp: incident.timestamp,
               files: fileArray,
+              impact,
             }
           : incident
       );
@@ -70,6 +70,7 @@ function App() {
         description,
         timestamp: new Date().toLocaleString(),
         files: fileArray,
+        impact,
       };
       setIncidents([...incidents, newIncident]);
       showToast("Incident logged successfully!");
@@ -80,6 +81,7 @@ function App() {
     setType("");
     setDescription("");
     setFiles([]);
+    setImpact("");
 
     // Clear file input
     if (fileInputRef.current) {
@@ -92,6 +94,7 @@ function App() {
     setTitle(incident.title);
     setType(incident.type);
     setDescription(incident.description);
+    setImpact(incident.impact);
   };
 
   const handleCancelEdit = () => {
@@ -99,6 +102,7 @@ function App() {
     setTitle("");
     setType("");
     setDescription("");
+    setImpact("");
   };
 
   const handleDelete = (id) => {
@@ -189,7 +193,9 @@ function App() {
   return (
     <div className="container">
       {toast && <div className="toast">{toast}</div>}
-      <h3 className="naming">HSE Incident Logger</h3>
+      <h1 className="title">
+        HSE Incident Logger <span className="beta-badge">Beta</span>
+      </h1>
 
       <form onSubmit={handleSubmit}>
         <input
@@ -199,25 +205,24 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <div className="dropdown-container">
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            onFocus={() => setSelectFocused(true)}
-            onBlur={() => setSelectFocused(false)}
-            required
-          >
-            <option value="">Select Type</option>
-            <option value="Fire">Fire</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Injury">Injury</option>
-            <option value="Spill">Spill</option>
-            <option value="Other">Other</option>
-          </select>
-          <span className={`dropdown-icon ${selectFocused ? "flipped" : ""}`}>
-            ▼
-          </span>
-        </div>
+        {/* <div className="dropdown-container"> */}
+        <select value={type} onChange={(e) => setType(e.target.value)} required>
+          <option value="">Select Type</option>
+          <option value="Fire">Fire</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Injury">Injury</option>
+          <option value="Spill">Spill</option>
+          <option value="Other">Other</option>
+        </select>
+        {/* </div> */}
+        {/* </div> */}
+
+        <select value={impact} onChange={(e) => setImpact(e.target.value)}>
+          <option value="">Select Impact</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
 
         <textarea
           placeholder="Description"
@@ -233,11 +238,11 @@ function App() {
           ref={fileInputRef}
         />
 
-        {/* Preview selected files */}
         <div className="file-preview">
           {files.length > 0 &&
             files.map((file, index) => (
               <div key={index} className="file-item">
+                {/* Show image preview if file is an image, otherwise show file name */}
                 {file.type.startsWith("image/") ? (
                   <img
                     src={URL.createObjectURL(file)}
@@ -252,6 +257,7 @@ function App() {
             ))}
         </div>
 
+        {/* Submit and Cancel buttons */}
         <button type="submit">
           {editingId ? "💾 Save Changes" : "Log Incident"}
         </button>
@@ -265,8 +271,6 @@ function App() {
           </button>
         )}
       </form>
-
-      {/* Controls Row (Filter, Sort, Search) */}
       <div className="controls-row">
         <select
           value={filterType}
@@ -301,63 +305,76 @@ function App() {
         </div>
       </div>
 
- <ul>
-  {sortedIncidents.length > 0 ? (
-    sortedIncidents
-      .slice(0, visibleCount) // ⬅ Show only up to visibleCount
-      .map((incident) => (
-        <li key={incident.id} className="incident-card">
-          <strong>{incident.title}</strong> – {incident.type}
-          <br />
-          {incident.description}
-          <br />
-          <small>{incident.timestamp}</small>
-          <br />
-          {incident.files && incident.files.length > 0 && (
-            <div className="incident-files">
-              {incident.files.map((file, index) =>
-                file.type && file.type.startsWith("image/") ? (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    width="80"
-                    height="80"
-                  />
-                ) : (
-                  <p key={index}>{file.name}</p>
-                )
-              )}
-            </div>
-          )}
-          <button className="edit-btn" onClick={() => handleEdit(incident)}>
-            ✏️ Edit
-          </button>
+      <ul>
+        {sortedIncidents.length > 0 ? (
+          sortedIncidents
+            .slice(0, visibleCount) // ⬅ Show only up to visibleCount
+            .map((incident) => (
+              <li key={incident.id} className="incident-card">
+                <strong>
+                  {incident.title}
+                  {incident.impact && (
+                    <span
+                      className={`impact-badge ${incident.impact.toLowerCase()}`}
+                    >
+                      {incident.impact}
+                    </span>
+                  )}
+                </strong>
+
+                {incident.type}
+                <br />
+                {incident.description}
+                <br />
+                <small>{incident.timestamp}</small>
+                <br />
+                {incident.files && incident.files.length > 0 && (
+                  <div className="incident-files">
+                    {incident.files.map((file, index) =>
+                      file.type && file.type.startsWith("image/") ? (
+                        <img
+                          key={index}
+                          src={URL.createObjectURL(file)}
+                          alt={file.name}
+                          width="80"
+                          height="80"
+                        />
+                      ) : (
+                        <p key={index}>{file.name}</p>
+                      )
+                    )}
+                  </div>
+                )}
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEdit(incident)}
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => setConfirmDeleteId(incident.id)}
+                >
+                  🗑️ Delete
+                </button>
+              </li>
+            ))
+        ) : search.trim() !== "" ? (
+          <p className="no-results">No incidents match your search.</p>
+        ) : null}
+      </ul>
+
+      {/* Load More Button */}
+      {visibleCount < sortedIncidents.length && (
+        <div style={{ textAlign: "center", marginTop: "10px" }}>
           <button
-            className="delete-btn"
-            onClick={() => setConfirmDeleteId(incident.id)}
+            onClick={() => setVisibleCount((prev) => prev + 2)}
+            className="load-more-btn"
           >
-            🗑️ Delete
+            Load More
           </button>
-        </li>
-      ))
-  ) : search.trim() !== "" ? (
-    <p className="no-results">No incidents match your search.</p>
-  ) : null}
-</ul>
-
-{/* Load More Button */}
-{visibleCount < sortedIncidents.length && (
-  <div style={{ textAlign: "center", marginTop: "10px" }}>
-    <button
-      onClick={() => setVisibleCount((prev) => prev + 2)}
-      className="load-more-btn"
-    >
-      Load More
-    </button>
-  </div>
-)}
-
+        </div>
+      )}
 
       {/* Export Button Below List */}
       <div className="export-container">
