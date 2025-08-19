@@ -37,7 +37,6 @@ function App() {
     localStorage.setItem("incidents", JSON.stringify(incidents));
   }, [incidents]);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -318,7 +317,7 @@ function App() {
           currentIncidents.map((incident) => (
             <li key={incident.id} className="incident-card">
               <strong>
-                {incident.title}
+                {incident.title} — {incident.type}
                 {incident.impact && (
                   <span
                     className={`impact-badge ${incident.impact.toLowerCase()}`}
@@ -327,9 +326,7 @@ function App() {
                   </span>
                 )}
               </strong>
-
-              {incident.type}
-              <br />
+              <br />x``
               {incident.description}
               <br />
               <small>{incident.timestamp}</small>
