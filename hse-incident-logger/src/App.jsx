@@ -214,7 +214,7 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        {/* <div className="dropdown-container"> */}
+        
         <select value={type} onChange={(e) => setType(e.target.value)} required>
           <option value="">Select Type</option>
           <option value="Fire">Fire</option>
@@ -223,8 +223,6 @@ function App() {
           <option value="Spill">Spill</option>
           <option value="Other">Other</option>
         </select>
-        {/* </div> */}
-        {/* </div> */}
 
         <select value={impact} onChange={(e) => setImpact(e.target.value)}>
           <option value="">Select Impact</option>
