@@ -19,9 +19,10 @@ function App() {
   const [search, setSearch] = useState("");
   const [files, setFiles] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [sortOption, setSortOption] = useState("Newest");
-  const [visibleCount, setVisibleCount] = useState(2);
+  const [sortOption, setSortOption] = useState("newest");
   const [impact, setImpact] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const incidentsPerPage = 5; // you can change to 2, 10, etc.
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -152,6 +153,14 @@ function App() {
     }
     return 0;
   });
+
+  //pagnation
+  const indexOfLastIncident = currentPage * incidentsPerPage;
+  const indexOfFirstIncident = indexOfLastIncident - incidentsPerPage;
+  const currentIncidents = sortedIncidents.slice(
+    indexOfFirstIncident,
+    indexOfLastIncident
+  );
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files)); // store as array
@@ -307,74 +316,88 @@ function App() {
 
       <ul>
         {sortedIncidents.length > 0 ? (
-          sortedIncidents
-            .slice(0, visibleCount) // ⬅ Show only up to visibleCount
-            .map((incident) => (
-              <li key={incident.id} className="incident-card">
-                <strong>
-                  {incident.title}
-                  {incident.impact && (
-                    <span
-                      className={`impact-badge ${incident.impact.toLowerCase()}`}
-                    >
-                      {incident.impact}
-                    </span>
-                  )}
-                </strong>
-
-                {incident.type}
-                <br />
-                {incident.description}
-                <br />
-                <small>{incident.timestamp}</small>
-                <br />
-                {incident.files && incident.files.length > 0 && (
-                  <div className="incident-files">
-                    {incident.files.map((file, index) =>
-                      file.type && file.type.startsWith("image/") ? (
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(file)}
-                          alt={file.name}
-                          width="80"
-                          height="80"
-                        />
-                      ) : (
-                        <p key={index}>{file.name}</p>
-                      )
-                    )}
-                  </div>
+          currentIncidents.map((incident) => (
+            <li key={incident.id} className="incident-card">
+              <strong>
+                {incident.title}
+                {incident.impact && (
+                  <span
+                    className={`impact-badge ${incident.impact.toLowerCase()}`}
+                  >
+                    {incident.impact}
+                  </span>
                 )}
-                <button
-                  className="edit-btn"
-                  onClick={() => handleEdit(incident)}
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => setConfirmDeleteId(incident.id)}
-                >
-                  🗑️ Delete
-                </button>
-              </li>
-            ))
+              </strong>
+
+              {incident.type}
+              <br />
+              {incident.description}
+              <br />
+              <small>{incident.timestamp}</small>
+              <br />
+              {incident.files && incident.files.length > 0 && (
+                <div className="incident-files">
+                  {incident.files.map((file, index) =>
+                    file.type && file.type.startsWith("image/") ? (
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        width="80"
+                        height="80"
+                      />
+                    ) : (
+                      <p key={index}>{file.name}</p>
+                    )
+                  )}
+                </div>
+              )}
+              <button className="edit-btn" onClick={() => handleEdit(incident)}>
+                ✏️ Edit
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => setConfirmDeleteId(incident.id)}
+              >
+                🗑️ Delete
+              </button>
+            </li>
+          ))
         ) : search.trim() !== "" ? (
           <p className="no-results">No incidents match your search.</p>
         ) : null}
       </ul>
 
-      {/* Load More Button */}
-      {visibleCount < sortedIncidents.length && (
-        <div style={{ textAlign: "center", marginTop: "10px" }}>
-          <button
-            onClick={() => setVisibleCount((prev) => prev + 2)}
-            className="load-more-btn"
-          >
-            Load More
-          </button>
-        </div>
-      )}
+      <div className="pagination">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+
+        <span>
+          {" "}
+          Page {currentPage} of{" "}
+          {Math.ceil(sortedIncidents.length / incidentsPerPage)}{" "}
+        </span>
+
+        <button
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(
+                prev + 1,
+                Math.ceil(sortedIncidents.length / incidentsPerPage)
+              )
+            )
+          }
+          disabled={
+            currentPage === Math.ceil(sortedIncidents.length / incidentsPerPage)
+          }
+        >
+          Next
+        </button>
+      </div>
 
       {/* Export Button Below List */}
       <div className="export-container">
