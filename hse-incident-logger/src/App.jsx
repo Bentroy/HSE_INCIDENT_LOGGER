@@ -22,7 +22,7 @@ function App() {
   const [sortOption, setSortOption] = useState("newest");
   const [impact, setImpact] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const incidentsPerPage = 5; // you can change to 2, 10, etc.
+  const incidentsPerPage = 2; // you can change to 2, 10, etc.
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -36,6 +36,7 @@ function App() {
   useEffect(() => {
     localStorage.setItem("incidents", JSON.stringify(incidents));
   }, [incidents]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -214,7 +215,7 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        
+
         <select value={type} onChange={(e) => setType(e.target.value)} required>
           <option value="">Select Type</option>
           <option value="Fire">Fire</option>
@@ -366,36 +367,38 @@ function App() {
         ) : null}
       </ul>
 
-      <div className="pagination">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
+      {sortedIncidents.length > 0 && (
+        <div className="pagination">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
 
-        <span>
-          {" "}
-          Page {currentPage} of{" "}
-          {Math.ceil(sortedIncidents.length / incidentsPerPage)}{" "}
-        </span>
+          <span>
+            Page {currentPage} of{" "}
+            {Math.ceil(sortedIncidents.length / incidentsPerPage)}
+          </span>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(
-                prev + 1,
-                Math.ceil(sortedIncidents.length / incidentsPerPage)
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(
+                  prev + 1,
+                  Math.ceil(sortedIncidents.length / incidentsPerPage)
+                )
               )
-            )
-          }
-          disabled={
-            currentPage === Math.ceil(sortedIncidents.length / incidentsPerPage)
-          }
-        >
-          Next
-        </button>
-      </div>
+            }
+            disabled={
+              currentPage ===
+              Math.ceil(sortedIncidents.length / incidentsPerPage)
+            }
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Export Button Below List */}
       <div className="export-container">
