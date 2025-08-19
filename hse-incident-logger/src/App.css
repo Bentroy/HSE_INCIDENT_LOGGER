@@ -577,7 +577,7 @@ li:hover {
   text-align: center;
   padding: 12px 12px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  /* removed unused */
   background: #222;
   color: #ddd;
   border: 1px solid #444;
