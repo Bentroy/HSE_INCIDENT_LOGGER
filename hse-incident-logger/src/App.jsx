@@ -208,7 +208,7 @@ function App() {
     <div className="container">
       {toast && <div className="toast">{toast}</div>}
       <h1 className="title">
-        HSE Incident Logger <span className="beta-badge">Beta</span>
+        HSE Incident Log <span className="beta-badge">Beta</span>
       </h1>
 
       {/* Incident Form */}

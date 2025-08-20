@@ -27,9 +27,9 @@ const IncidentForm = ({
       <select value={type} onChange={(e) => setType(e.target.value)} required>
         <option value="">Select Type</option>
         <option value="Fire">Fire</option>
-        <option value="Accident">Accident</option>
+        <option value="Accident">Slips</option>
         <option value="Electrical">Electrical</option>
-        <option value="Injury">Injury</option>
+        <option value="Injury">Injury/Medical</option>
         <option value="Other">Other</option>
       </select>
 
@@ -45,7 +45,22 @@ const IncidentForm = ({
       </select>
 
       <textarea
-        placeholder="Description"
+        className="analysis"
+        placeholder="Potential Root Cause Analysis"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+
+        <textarea
+        className="Location"
+        placeholder="Location"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+      <textarea
+        placeholder="Brief description of incident"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
