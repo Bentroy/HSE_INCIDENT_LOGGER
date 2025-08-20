@@ -43,22 +43,7 @@ const IncidentForm = ({
         <option value="Medium">Medium</option>
         <option value="High">High</option>
       </select>
-
-      <textarea
-        className="analysis"
-        placeholder="Potential Root Cause Analysis"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      />
-
-        <textarea
-        className="Location"
-        placeholder="Location"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      />
+      
       <textarea
         placeholder="Brief description of incident"
         value={description}
