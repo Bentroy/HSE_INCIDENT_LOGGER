@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { useRef } from "react";
+import IncidentForm from "./components/IncidentForm";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
@@ -206,78 +206,21 @@ function App() {
         HSE Incident Logger <span className="beta-badge">Beta</span>
       </h1>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Incident Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+      <IncidentForm
+        title={title}
+        setTitle={setTitle}
+        type={type}
+        setType={setType}
+        description={description}
+        setDescription={setDescription}
+        impact={impact}
+        setImpact={setImpact}
+        files={files}
+        setFiles={setFiles}
+        handleSubmit={handleSubmit}
+        editingIncident={editingId}
+      />
 
-        <select value={type} onChange={(e) => setType(e.target.value)} required>
-          <option value="">Select Type</option>
-          <option value="Fire">Fire</option>
-          <option value="Electrical">Electrical</option>
-          <option value="Injury">Injury</option>
-          <option value="Spill">Spill</option>
-          <option value="Other">Other</option>
-        </select>
-
-        <select value={impact} onChange={(e) => setImpact(e.target.value)}>
-          <option value="">Select Impact</option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-
-        <input
-          type="file"
-          multiple
-          onChange={handleFileChange}
-          ref={fileInputRef}
-        />
-
-        <div className="file-preview">
-          {files.length > 0 &&
-            files.map((file, index) => (
-              <div key={index} className="file-item">
-                {/* Show image preview if file is an image, otherwise show file name */}
-                {file.type.startsWith("image/") ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    width="80"
-                    height="80"
-                  />
-                ) : (
-                  <p>{file.name}</p>
-                )}
-              </div>
-            ))}
-        </div>
-
-        {/* Submit and Cancel buttons */}
-        <button type="submit">
-          {editingId ? "💾 Save Changes" : "Log Incident"}
-        </button>
-        {editingId && (
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={handleCancelEdit}
-          >
-            ❌ Cancel
-          </button>
-        )}
-      </form>
       <div className="controls-row">
         <select
           value={filterType}
@@ -326,7 +269,7 @@ function App() {
           <h3>Low Impact</h3>
           <p>{sortedIncidents.filter((i) => i.impact === "Low").length}</p>
         </div>
-                <div className="stat-card">
+        <div className="stat-card">
           <h3>Total</h3>
           <p>{sortedIncidents.length}</p>
         </div>
