@@ -12,7 +12,7 @@ const IncidentForm = ({
   setFiles,
   handleSubmit,
   editingId,
-  handleCancelEdit
+  handleCancelEdit,
 }) => {
   return (
     <form onSubmit={handleSubmit} className="incident-form">
@@ -32,13 +32,6 @@ const IncidentForm = ({
         <option value="Other">Other</option>
       </select>
 
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      />
-
       <select
         value={impact}
         onChange={(e) => setImpact(e.target.value)}
@@ -50,26 +43,28 @@ const IncidentForm = ({
         <option value="High">High</option>
       </select>
 
+      <textarea
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+
       <input
         type="file"
         multiple
         onChange={(e) => setFiles(Array.from(e.target.files))}
       />
 
-
-              {/* Submit and Cancel buttons */}
-        <button type="submit">
-          {editingId ? "💾 Save Changes" : "Log Incident"}
+      {/* Submit and Cancel buttons */}
+      <button type="submit">
+        {editingId ? "💾 Save Changes" : "Log Incident"}
+      </button>
+      {editingId && (
+        <button type="button" className="cancel-btn" onClick={handleCancelEdit}>
+          ❌ Cancel
         </button>
-        {editingId && (
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={handleCancelEdit}
-          >
-            ❌ Cancel
-          </button>
-        )}
+      )}
     </form>
   );
 };
