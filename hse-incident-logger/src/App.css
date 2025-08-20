@@ -635,3 +635,51 @@ li:hover {
   cursor: default;
   opacity: 0.7;
 }
+
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  color: var(--text-color);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.stat-card h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.stat-card p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.stat-card.high {
+  border-top: 4px solid red;
+}
+
+.stat-card.medium {
+  border-top: 4px solid orange;
+}
+
+.stat-card.low {
+  border-top: 4px solid green;
+}
+

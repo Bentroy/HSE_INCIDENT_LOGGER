@@ -314,10 +314,6 @@ function App() {
 
       {/* === Incident Stats Summary === */}
       <div className="stats-container">
-        <div className="stat-card">
-          <h3>Total</h3>
-          <p>{sortedIncidents.length}</p>
-        </div>
         <div className="stat-card high">
           <h3>High Impact</h3>
           <p>{sortedIncidents.filter((i) => i.impact === "High").length}</p>
@@ -329,6 +325,10 @@ function App() {
         <div className="stat-card low">
           <h3>Low Impact</h3>
           <p>{sortedIncidents.filter((i) => i.impact === "Low").length}</p>
+        </div>
+                <div className="stat-card">
+          <h3>Total</h3>
+          <p>{sortedIncidents.length}</p>
         </div>
       </div>
 
