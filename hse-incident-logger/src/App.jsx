@@ -312,6 +312,26 @@ function App() {
         </div>
       </div>
 
+      {/* === Incident Stats Summary === */}
+      <div className="stats-container">
+        <div className="stat-card">
+          <h3>Total</h3>
+          <p>{sortedIncidents.length}</p>
+        </div>
+        <div className="stat-card high">
+          <h3>High Impact</h3>
+          <p>{sortedIncidents.filter((i) => i.impact === "High").length}</p>
+        </div>
+        <div className="stat-card medium">
+          <h3>Medium Impact</h3>
+          <p>{sortedIncidents.filter((i) => i.impact === "Medium").length}</p>
+        </div>
+        <div className="stat-card low">
+          <h3>Low Impact</h3>
+          <p>{sortedIncidents.filter((i) => i.impact === "Low").length}</p>
+        </div>
+      </div>
+
       <ul>
         {sortedIncidents.length > 0 ? (
           currentIncidents.map((incident) => (
@@ -326,7 +346,8 @@ function App() {
                   </span>
                 )}
               </strong>
-              <br />x``
+              <br />
+              x``
               {incident.description}
               <br />
               <small>{incident.timestamp}</small>
