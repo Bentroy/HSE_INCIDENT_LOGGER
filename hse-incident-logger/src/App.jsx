@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import IncidentForm from "./components/IncidentForm";
+import IncidentList from "./components/IncidentList";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
@@ -162,6 +163,10 @@ function App() {
     indexOfLastIncident
   );
 
+  // pagination helpers used by IncidentList
+  const totalPages = Math.ceil(sortedIncidents.length / incidentsPerPage);
+  const visibleCount = currentIncidents.length;
+
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files)); // store as array
   };
@@ -206,6 +211,7 @@ function App() {
         HSE Incident Logger <span className="beta-badge">Beta</span>
       </h1>
 
+      {/* Incident Form */}
       <IncidentForm
         title={title}
         setTitle={setTitle}
@@ -278,91 +284,17 @@ function App() {
         </div>
       </div>
 
-      <ul>
-        {sortedIncidents.length > 0 ? (
-          currentIncidents.map((incident) => (
-            <li key={incident.id} className="incident-card">
-              <strong>
-                {incident.title} — {incident.type}
-                {incident.impact && (
-                  <span
-                    className={`impact-badge ${incident.impact.toLowerCase()}`}
-                  >
-                    {incident.impact}
-                  </span>
-                )}
-              </strong>
-              <br />
-              x``
-              {incident.description}
-              <br />
-              <small>{incident.timestamp}</small>
-              <br />
-              {incident.files && incident.files.length > 0 && (
-                <div className="incident-files">
-                  {incident.files.map((file, index) =>
-                    file.type && file.type.startsWith("image/") ? (
-                      <img
-                        key={index}
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        width="80"
-                        height="80"
-                      />
-                    ) : (
-                      <p key={index}>{file.name}</p>
-                    )
-                  )}
-                </div>
-              )}
-              <button className="edit-btn" onClick={() => handleEdit(incident)}>
-                ✏️ Edit
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => setConfirmDeleteId(incident.id)}
-              >
-                🗑️ Delete
-              </button>
-            </li>
-          ))
-        ) : search.trim() !== "" ? (
-          <p className="no-results">No incidents match your search.</p>
-        ) : null}
-      </ul>
-
-      {sortedIncidents.length > 0 && (
-        <div className="pagination">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-
-          <span>
-            Page {currentPage} of{" "}
-            {Math.ceil(sortedIncidents.length / incidentsPerPage)}
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((prev) =>
-                Math.min(
-                  prev + 1,
-                  Math.ceil(sortedIncidents.length / incidentsPerPage)
-                )
-              )
-            }
-            disabled={
-              currentPage ===
-              Math.ceil(sortedIncidents.length / incidentsPerPage)
-            }
-          >
-            Next
-          </button>
-        </div>
-      )}
+      {/* Incident List */}
+      <IncidentList
+        sortedIncidents={sortedIncidents}
+        search={search}
+        visibleCount={visibleCount}
+        handleEdit={handleEdit}
+        setConfirmDeleteId={setConfirmDeleteId}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {/* Export Button Below List */}
       <div className="export-container">
