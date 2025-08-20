@@ -11,7 +11,8 @@ const IncidentForm = ({
   setImpact,
   setFiles,
   handleSubmit,
-  editingIncident,
+  editingId,
+  handleCancelEdit
 }) => {
   return (
     <form onSubmit={handleSubmit} className="incident-form">
@@ -55,9 +56,20 @@ const IncidentForm = ({
         onChange={(e) => setFiles(Array.from(e.target.files))}
       />
 
-      <button type="submit" className="submit-btn">
-        {editingIncident ? "Update Incident" : "Log Incident"}
-      </button>
+
+              {/* Submit and Cancel buttons */}
+        <button type="submit">
+          {editingId ? "💾 Save Changes" : "Log Incident"}
+        </button>
+        {editingId && (
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={handleCancelEdit}
+          >
+            ❌ Cancel
+          </button>
+        )}
     </form>
   );
 };

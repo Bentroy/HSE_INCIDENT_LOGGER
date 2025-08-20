@@ -218,7 +218,10 @@ function App() {
         files={files}
         setFiles={setFiles}
         handleSubmit={handleSubmit}
-        editingIncident={editingId}
+        editingId={editingId}
+        handleFileChange={handleFileChange}
+        setEditingId={setEditingId}
+        handleCancelEdit={handleCancelEdit}
       />
 
       <div className="controls-row">
