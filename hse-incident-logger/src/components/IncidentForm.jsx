@@ -28,6 +28,7 @@ const IncidentForm = ({
         <option value="">Select Type</option>
         <option value="Fire">Fire</option>
         <option value="Accident">Accident</option>
+        <option value="Electrical">Electrical</option>
         <option value="Injury">Injury</option>
         <option value="Other">Other</option>
       </select>

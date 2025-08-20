@@ -1,35 +1,9 @@
 import React from "react";
+import IncidentCard from "./IncidentCard";
 
-// Renders the impact badge
-const renderImpactBadge = (impact) => {
-  if (!impact) return null;
-  return (
-    <span className={`impact-badge ${impact.toLowerCase()}`}>{impact}</span>
-  );
-};
+// Impact badge renderer removed (was unused)
 
-// Renders attached files (images / docs)
-const renderFiles = (files) => {
-  if (!files || files.length === 0) return null;
-
-  return (
-    <div className="incident-files">
-      {files.map((file, index) =>
-        file.type && file.type.startsWith("image/") ? (
-          <img
-            key={index}
-            src={URL.createObjectURL(file)}
-            alt={file.name}
-            width="80"
-            height="80"
-          />
-        ) : (
-          <p key={index}>{file.name}</p>
-        )
-      )}
-    </div>
-  );
-};
+// Removed unused renderFiles helper to avoid linter warning.
 
 function IncidentList({
   sortedIncidents,
@@ -45,39 +19,16 @@ function IncidentList({
     <div className="incident-list-container">
       <ul>
         {sortedIncidents.length > 0 ? (
-          sortedIncidents.slice(0, visibleCount).map((incident) => (
-            <li key={incident.id} className="incident-card">
-              {/* Title + Badge */}
-              <strong>
-                {incident.title}
-                {renderImpactBadge(incident.impact)}
-              </strong>
-
-              {/* Incident details */}
-              <p>{incident.type}</p>
-              <p>{incident.description}</p>
-              <small>{incident.timestamp}</small>
-
-              {/* Files */}
-              {renderFiles(incident.files)}
-
-              {/* Action buttons */}
-              <div className="incident-actions">
-                <button
-                  className="edit-btn"
-                  onClick={() => handleEdit(incident)}
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => setConfirmDeleteId(incident.id)}
-                >
-                  🗑️ Delete
-                </button>
-              </div>
-            </li>
-          ))
+          sortedIncidents
+            .slice((currentPage - 1) * visibleCount, currentPage * visibleCount)
+            .map((incident) => (
+              <IncidentCard
+                key={incident.id}
+                incident={incident}
+                onEdit={handleEdit}
+                onDelete={(id) => setConfirmDeleteId(id)}
+              />
+            ))
         ) : search.trim() !== "" ? (
           <p className="no-results">No incidents match your search.</p>
         ) : null}
