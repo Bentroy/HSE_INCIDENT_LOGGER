@@ -3,6 +3,8 @@ import "./App.css";
 import IncidentForm from "./components/IncidentForm";
 import IncidentList from "./components/IncidentList";
 import SummaryCard from "./components/SummaryCard";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
@@ -25,6 +27,7 @@ function App() {
   const [impact, setImpact] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const incidentsPerPage = 2; // you can change to 2, 10, etc.
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Theme management
   const [theme, setTheme] = useState(() => {
@@ -204,6 +207,13 @@ function App() {
 
     URL.revokeObjectURL(url);
   };
+
+
+
+  // Check if user is logged in
+  if (!currentUser) {
+    return <Login onLogin={setCurrentUser} />;
+  }
 
   return (
     <div className="container">
