@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import "./App.css";
 import IncidentForm from "./components/IncidentForm";
 import IncidentList from "./components/IncidentList";
 import SummaryCard from "./components/SummaryCard";
 import Login from "./components/Login";
-import Register from "./components/Register";
+import Auth from "./components/Auth";
 
 function App() {
   const [incidents, setIncidents] = useState(() => {
@@ -13,7 +13,6 @@ function App() {
   });
 
   // Form state management
-  const fileInputRef = useRef(null);
   const [toast, setToast] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
@@ -45,54 +44,25 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const fileArray = Array.from(files).map((file) => ({
-      name: file.name,
-      url: URL.createObjectURL(file),
-      type: file.type,
-    }));
+    const newIncident = {
+      id: Date.now(),
+      title,
+      type,
+      description,
+      impact,
+      files,
+      loggedBy: currentUser.username, // ✅ track who logged it
+      timestamp: new Date().toISOString(),
+    };
 
-    if (editingId) {
-      const updatedIncidents = incidents.map((incident) =>
-        incident.id === editingId
-          ? {
-              ...incident,
-              title,
-              type,
-              description,
-              timestamp: incident.timestamp,
-              files: fileArray,
-              impact,
-            }
-          : incident
-      );
-      setIncidents(updatedIncidents);
-      setEditingId(null);
-      showToast("Incident updated successfully!");
-    } else {
-      const newIncident = {
-        id: Date.now(),
-        title,
-        type,
-        description,
-        timestamp: new Date().toLocaleString(),
-        files: fileArray,
-        impact,
-      };
-      setIncidents([...incidents, newIncident]);
-      showToast("Incident logged successfully!");
-    }
+    setIncidents((prev) => [...prev, newIncident]);
 
-    // Reset form
+    // reset fields
     setTitle("");
     setType("");
     setDescription("");
-    setFiles([]);
     setImpact("");
-
-    // Clear file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-    }
+    setFiles([]);
   };
 
   const handleEdit = (incident) => {
@@ -171,10 +141,6 @@ function App() {
   const totalPages = Math.ceil(sortedIncidents.length / incidentsPerPage);
   const visibleCount = currentIncidents.length;
 
-  const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files)); // store as array
-  };
-
   // Export to CSV function
 
   const exportToCSV = () => {
@@ -208,8 +174,6 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-
-
   // Check if user is logged in
   if (!currentUser) {
     return <Login onLogin={setCurrentUser} />;
@@ -217,119 +181,136 @@ function App() {
 
   return (
     <div className="container">
-      {toast && <div className="toast">{toast}</div>}
-      <h1 className="title">
-        HSE Incident Log <span className="beta-badge">Beta</span>
-      </h1>
+      {currentUser ? (
+        <div>
+          {toast && <div className="toast">{toast}</div>}
+          <h1 className="title">
+            HSE Incident Log <span className="beta-badge">Beta</span>
+          </h1>
 
-      {/* Incident Form */}
-      <IncidentForm
-        title={title}
-        setTitle={setTitle}
-        type={type}
-        setType={setType}
-        description={description}
-        setDescription={setDescription}
-        impact={impact}
-        setImpact={setImpact}
-        files={files}
-        setFiles={setFiles}
-        handleSubmit={handleSubmit}
-        editingId={editingId}
-        handleFileChange={handleFileChange}
-        setEditingId={setEditingId}
-        handleCancelEdit={handleCancelEdit}
-      />
-
-      <div className="controls-row">
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="All">Filter: All</option>
-          {[...new Set(incidents.map((i) => i.type))].map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-        >
-          <option value="newest">Sort: Newest First</option>
-          <option value="oldest">Sort: Oldest First</option>
-          <option value="typeAsc">Sort: Type (A–Z)</option>
-          <option value="typeDesc">Sort: Type (Z–A)</option>
-        </select>
-
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+          {/* Incident Form */}
+          <IncidentForm
+            title={title}
+            setTitle={setTitle}
+            type={type}
+            setType={setType}
+            description={description}
+            setDescription={setDescription}
+            impact={impact}
+            setImpact={setImpact}
+            setFiles={setFiles}
+            handleSubmit={handleSubmit}
+            editingId={editingId}
+            handleCancelEdit={handleCancelEdit}
+            currentUser={currentUser} // ✅ new prop (not yet used in form)
           />
-          <span className="search-icon">🔍</span>
-        </div>
-      </div>
 
-      {/* === Incident Stats Summary === */}
-      <SummaryCard incidents={incidents} />
+          <div className="controls-row">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="All">Filter: All</option>
+              {[...new Set(incidents.map((i) => i.type))].map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
 
-      {/* Incident List */}
-      <IncidentList
-        sortedIncidents={sortedIncidents}
-        search={search}
-        visibleCount={visibleCount}
-        handleEdit={handleEdit}
-        setConfirmDeleteId={setConfirmDeleteId}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="typeAsc">Sort: Type (A–Z)</option>
+              <option value="typeDesc">Sort: Type (Z–A)</option>
+            </select>
 
-      {/* Export Button Below List */}
-      <div className="export-container">
-        <button onClick={exportToCSV} className="export-btn small">
-          📤 Export CSV
-        </button>
-      </div>
-      {confirmDeleteId && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <p>Are you sure you want to delete this incident?</p>
-            <div className="modal-actions">
-              <button
-                className="cancel-btn"
-                onClick={() => setConfirmDeleteId(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => {
-                  handleDelete(confirmDeleteId);
-                  setConfirmDeleteId(null);
-                }}
-              >
-                Delete
-              </button>
+            <div className="search-wrapper">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <span className="search-icon">🔍</span>
             </div>
           </div>
-        </div>
-      )}
 
-      <footer className="footer">
-        <p>© 2025 HSE Logger</p>
-        <button onClick={toggleTheme} className="theme-toggle">
-          <span className="icon-wrapper" aria-hidden="true">
-            {theme === "light" ? "🌙" : "☀️"}
-          </span>
-          {theme === "light" ? " Dark Mode" : " Light Mode"}
-        </button>
-      </footer>
+          {/* Admin-only summary */}
+          {currentUser.role === "admin" && (
+            <SummaryCard incidents={sortedIncidents} />
+          )}
+
+          {/* Incident List */}
+          <IncidentList
+            incidents={
+              currentUser.role === "admin"
+                ? sortedIncidents
+                : sortedIncidents.filter(
+                    (incident) => incident.loggedBy === currentUser.username
+                  )
+            }
+            sortedIncidents={sortedIncidents}
+            search={search}
+            visibleCount={visibleCount}
+            handleEdit={handleEdit}
+            setConfirmDeleteId={setConfirmDeleteId}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+
+          {/* Export Button Below List */}
+          <div className="export-container">
+            <button onClick={exportToCSV} className="export-btn small">
+              📤 Export CSV
+            </button>
+          </div>
+
+          {confirmDeleteId && (
+            <div className="modal-overlay">
+              <div className="modal">
+                <p>Are you sure you want to delete this incident?</p>
+                <div className="modal-actions">
+                  <button
+                    className="cancel-btn"
+                    onClick={() => setConfirmDeleteId(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => {
+                      handleDelete(confirmDeleteId);
+                      setConfirmDeleteId(null);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <footer className="footer">
+            <p>© 2025 HSE Logger</p>
+            <button onClick={toggleTheme} className="theme-toggle">
+              <span className="icon-wrapper" aria-hidden="true">
+                {theme === "light" ? "🌙" : "☀️"}
+              </span>
+              {theme === "light" ? " Dark Mode" : " Light Mode"}
+            </button>
+          </footer>
+
+          {/* Logout button */}
+          <button onClick={() => setCurrentUser(null)}>Logout</button>
+        </div>
+      ) : (
+        <Auth onLogin={setCurrentUser} />
+      )}
     </div>
   );
 }
